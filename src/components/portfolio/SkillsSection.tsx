@@ -1,14 +1,21 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { Code, Database, TrendingUp, PieChart, Cpu, LineChart } from "lucide-react";
+import {
+  Code,
+  Database,
+  TrendingUp,
+  PieChart,
+  Cpu,
+  LineChart,
+  ChevronRight,
+} from "lucide-react";
 
 const skillCategories = [
   {
     id: "programming",
     icon: Code,
     title: "Programming & Tools",
-    color: "from-accent to-secondary",
     skills: [
       { name: "Python", usage: "Data manipulation, ML models, automation" },
       { name: "Pandas & NumPy", usage: "Data cleaning and numerical analysis" },
@@ -20,7 +27,6 @@ const skillCategories = [
     id: "analytics",
     icon: TrendingUp,
     title: "Business Analytics",
-    color: "from-secondary to-primary",
     skills: [
       { name: "KPI Dashboards", usage: "Real-time performance monitoring" },
       { name: "Market Analytics", usage: "Competitive analysis and trends" },
@@ -29,22 +35,9 @@ const skillCategories = [
     ],
   },
   {
-    id: "data",
-    icon: Database,
-    title: "Data Engineering",
-    color: "from-primary to-accent",
-    skills: [
-      { name: "Data Cleaning", usage: "Preprocessing and quality assurance" },
-      { name: "ETL Pipelines", usage: "Data extraction and transformation" },
-      { name: "EDA", usage: "Exploratory data analysis and insights" },
-      { name: "Data Modeling", usage: "Schema design and optimization" },
-    ],
-  },
-  {
     id: "visualization",
     icon: PieChart,
     title: "Visualization",
-    color: "from-accent to-primary",
     skills: [
       { name: "Power BI", usage: "Interactive business dashboards" },
       { name: "Matplotlib & Seaborn", usage: "Statistical visualizations" },
@@ -56,7 +49,6 @@ const skillCategories = [
     id: "ml",
     icon: Cpu,
     title: "Machine Learning",
-    color: "from-secondary to-accent",
     skills: [
       { name: "Regression Models", usage: "Predictive analytics" },
       { name: "Classification", usage: "Customer segmentation" },
@@ -68,7 +60,6 @@ const skillCategories = [
     id: "reporting",
     icon: LineChart,
     title: "Reporting & Insights",
-    color: "from-primary to-secondary",
     skills: [
       { name: "A/B Testing", usage: "Experiment design and analysis" },
       { name: "Forecasting", usage: "Time series predictions" },
@@ -78,13 +69,135 @@ const skillCategories = [
   },
 ];
 
+// Fixed heights for the card interior - card height stays constant
+const CARD_HEIGHT = 340; // Fixed card height in pixels
+const HEADER_HEIGHT = 72; // Icon + title section
+const SKILL_COLLAPSED_HEIGHT = 44; // Each skill when collapsed
+const SKILL_EXPANDED_HEIGHT = 76; // Each skill when expanded (with usage text)
+
+interface SkillItemProps {
+  skill: { name: string; usage: string };
+  categoryId: string;
+  isExpanded: boolean;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
+}
+
+const SkillItem = ({ skill, isExpanded, onHoverStart, onHoverEnd }: SkillItemProps) => {
+  return (
+    <motion.div
+      layout
+      onHoverStart={onHoverStart}
+      onHoverEnd={onHoverEnd}
+      animate={{
+        height: isExpanded ? SKILL_EXPANDED_HEIGHT : SKILL_COLLAPSED_HEIGHT,
+      }}
+      transition={{
+        height: { type: "spring", stiffness: 400, damping: 30 },
+        layout: { type: "spring", stiffness: 400, damping: 30 },
+      }}
+      className="overflow-hidden cursor-pointer"
+    >
+      <div
+        className={`h-full px-4 py-3 rounded-xl border transition-colors duration-200 ${
+          isExpanded
+            ? "border-primary/40 bg-primary/10"
+            : "border-transparent bg-secondary/50 hover:bg-secondary/80"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <span className="font-medium text-foreground text-sm">
+            {skill.name}
+          </span>
+          <motion.div
+            animate={{ rotate: isExpanded ? 90 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronRight className={`w-4 h-4 transition-colors duration-200 ${
+              isExpanded ? "text-primary" : "text-muted-foreground"
+            }`} />
+          </motion.div>
+        </div>
+        
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.p
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.15 }}
+              className="text-xs text-muted-foreground mt-2 leading-relaxed"
+            >
+              {skill.usage}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+};
+
+interface SkillCardProps {
+  category: typeof skillCategories[0];
+  index: number;
+  isInView: boolean;
+}
+
+const SkillCard = ({ category, index, isInView }: SkillCardProps) => {
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const Icon = category.icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="skill-card group"
+      style={{ height: CARD_HEIGHT }}
+    >
+      {/* Category Header */}
+      <div className="flex items-center gap-4 mb-5" style={{ height: HEADER_HEIGHT }}>
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-6 h-6 text-primary-foreground" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground">
+          {category.title}
+        </h3>
+      </div>
+
+      {/* Skills List - Using flex with fixed container */}
+      <motion.div 
+        layout
+        className="flex flex-col gap-2"
+        style={{ height: CARD_HEIGHT - HEADER_HEIGHT - 48 }} // 48px for padding
+      >
+        {category.skills.map((skill) => (
+          <SkillItem
+            key={skill.name}
+            skill={skill}
+            categoryId={category.id}
+            isExpanded={hoveredSkill === skill.name}
+            onHoverStart={() => setHoveredSkill(skill.name)}
+            onHoverEnd={() => setHoveredSkill(null)}
+          />
+        ))}
+      </motion.div>
+
+      {/* Decorative glow */}
+      <div className="absolute -z-10 top-0 right-0 w-32 h-32 rounded-full bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    </motion.div>
+  );
+};
+
 const SkillsSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
   return (
-    <section id="skills" className="py-24 md:py-32 bg-gradient-to-b from-background via-muted/30 to-background">
+    <section
+      id="skills"
+      className="py-24 md:py-32 gradient-mesh-bg"
+    >
       <div ref={ref} className="section-container">
         {/* Section Header */}
         <motion.div
@@ -93,97 +206,27 @@ const SkillsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-accent font-medium tracking-wider uppercase text-sm">
+          <span className="text-primary font-medium tracking-wider uppercase text-sm">
             Expertise
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-3 mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-3 mb-6 text-foreground">
             Skills & <span className="text-gradient">Capabilities</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A comprehensive toolkit for transforming data into actionable business intelligence
+            A comprehensive toolkit for transforming data into actionable
+            business intelligence
           </p>
         </motion.div>
 
-        {/* Skills Grid - Creative Cards */}
+        {/* Skills Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {skillCategories.map((category, index) => (
-            <motion.div
+            <SkillCard
               key={category.id}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="skill-card group"
-            >
-              {/* Category Header */}
-              <div className="flex items-center gap-4 mb-6">
-                <div
-                  className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <category.icon className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <h3 className="text-lg font-bold text-primary">{category.title}</h3>
-              </div>
-
-              {/* Skills List */}
-              <div className="space-y-3">
-                {category.skills.map((skill) => (
-                  <motion.div
-                    key={skill.name}
-                    onHoverStart={() => setHoveredSkill(`${category.id}-${skill.name}`)}
-                    onHoverEnd={() => setHoveredSkill(null)}
-                    className="relative"
-                  >
-                    <div
-                      className={`p-3 rounded-xl border transition-all duration-300 cursor-pointer ${
-                        hoveredSkill === `${category.id}-${skill.name}`
-                          ? "border-accent/50 bg-accent/5"
-                          : "border-transparent bg-muted/30"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-primary text-sm">
-                          {skill.name}
-                        </span>
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{
-                            width:
-                              hoveredSkill === `${category.id}-${skill.name}`
-                                ? "auto"
-                                : 0,
-                          }}
-                          className="overflow-hidden"
-                        >
-                          <span className="text-xs text-accent whitespace-nowrap pl-2">
-                            →
-                          </span>
-                        </motion.div>
-                      </div>
-                      <motion.p
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{
-                          height:
-                            hoveredSkill === `${category.id}-${skill.name}`
-                              ? "auto"
-                              : 0,
-                          opacity:
-                            hoveredSkill === `${category.id}-${skill.name}` ? 1 : 0,
-                        }}
-                        transition={{ duration: 0.2 }}
-                        className="text-xs text-muted-foreground mt-2 overflow-hidden"
-                      >
-                        {skill.usage}
-                      </motion.p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Decorative Element */}
-              <div
-                className={`absolute -z-10 top-4 right-4 w-24 h-24 rounded-full bg-gradient-to-br ${category.color} opacity-5 blur-2xl group-hover:opacity-10 transition-opacity`}
-              />
-            </motion.div>
+              category={category}
+              index={index}
+              isInView={isInView}
+            />
           ))}
         </div>
 

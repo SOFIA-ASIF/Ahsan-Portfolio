@@ -38,21 +38,21 @@ const education = [
   },
 ];
 
-const certifications = [
-  { name: "Python for Data Analysis", provider: "DataCamp", year: "2023" },
-  { name: "Machine Learning Fundamentals", provider: "Coursera", year: "2023" },
-  { name: "Power BI Desktop", provider: "Microsoft", year: "2022" },
-  { name: "Advanced Excel for Analytics", provider: "LinkedIn Learning", year: "2022" },
-  { name: "SQL for Data Science", provider: "DataCamp", year: "2022" },
-  { name: "Statistical Analysis with Python", provider: "Udemy", year: "2023" },
-];
+// const certifications = [
+//   { name: "Python for Data Analysis", provider: "DataCamp", year: "2023" },
+//   { name: "Machine Learning Fundamentals", provider: "Coursera", year: "2023" },
+//   { name: "Power BI Desktop", provider: "Microsoft", year: "2022" },
+//   { name: "Advanced Excel for Analytics", provider: "LinkedIn Learning", year: "2022" },
+//   { name: "SQL for Data Science", provider: "DataCamp", year: "2022" },
+//   { name: "Statistical Analysis with Python", provider: "Udemy", year: "2023" },
+// ];
 
 const EducationSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="education" className="py-24 md:py-32">
+    <section id="education" className="py-24 md:py-32 ">
       <div ref={ref} className="section-container">
         {/* Section Header */}
         <motion.div
@@ -65,7 +65,7 @@ const EducationSection = () => {
             Background
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-3 mb-6">
-            Education & <span className="text-gradient">Certifications</span>
+            Education{/* & <span className="text-gradient">Certifications</span> */}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl">
             A strong academic foundation combined with continuous professional
@@ -73,84 +73,113 @@ const EducationSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-5 gap-12">
-          {/* Education Timeline */}
-          <div className="lg:col-span-3">
-            <motion.h3
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.2 }}
-              className="text-xl font-bold text-primary mb-8 flex items-center gap-3"
+       <div className="grid lg:grid-cols-1 gap-4">
+  {/* Education Timeline */}
+  <div className="lg:col-span-3 relative">
+    <motion.h3
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ delay: 0.2 }}
+      className="text-xl font-bold text-primary mb-12 flex items-center gap-3"
+    >
+      <GraduationCap className="w-6 h-6 text-accent" />
+      Academic Journey
+    </motion.h3>
+
+    {/* Center Timeline Line */}
+    <div className="absolute left-1/2 top-16 h-full w-[2px] bg-accent/30 -translate-x-1/2" />
+
+    <div className="space-y-16">
+      {education.map((edu, index) => {
+        const isLeft = index % 2 === 0;
+
+        return (
+          <motion.div
+            key={edu.id}
+            initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 + index * 0.15 }}
+            className="relative flex flex-col lg:flex-row"
+          >
+            {/* Timeline Dot */}
+            <div
+              className={`absolute left-1/2 top-6 w-4 h-4 rounded-full border-4 border-background -translate-x-1/2 ${
+                edu.status === "current"
+                  ? "bg-accent animate-pulse"
+                  : "bg-secondary"
+              }`}
+            />
+
+            {/* Card */}
+            <div
+              className={`w-full lg:w-1/2 ${
+                isLeft
+                  ? "lg:pr-12 lg:text-right"
+                  : "lg:pl-12 lg:ml-auto"
+              }`}
             >
-              <GraduationCap className="w-6 h-6 text-accent" />
-              Academic Journey
-            </motion.h3>
+              <motion.div
+                whileHover={{ x: isLeft ? -5 : 5 }}
+                className="p-6 bg-card rounded-2xl border border-border/50 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
+              >
+                {/* Status Badge */}
+                {edu.status === "current" && (
+                  <span className="inline-block px-3 py-1 text-xs font-medium bg-accent/10 text-accent rounded-full mb-4">
+                    Currently Pursuing
+                  </span>
+                )}
 
-            <div className="space-y-8">
-              {education.map((edu, index) => (
-                <motion.div
-                  key={edu.id}
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.15 }}
-                  className="relative pl-8 border-l-2 border-accent/30"
+                <h4 className="text-lg font-bold text-primary mb-1">
+                  {edu.degree}
+                </h4>
+                <p className="text-accent font-medium mb-2">
+                  {edu.institution}
+                </p>
+
+                <div
+                  className={`flex items-center gap-4 text-sm text-muted-foreground mb-4 ${
+                    isLeft ? "lg:justify-end" : ""
+                  }`}
                 >
-                  {/* Timeline Dot */}
-                  <div
-                    className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-4 border-background ${
-                      edu.status === "current"
-                        ? "bg-accent animate-pulse"
-                        : "bg-secondary"
-                    }`}
-                  />
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {edu.period}
+                  </span>
+                  <span>{edu.location}</span>
+                </div>
 
-                  <motion.div
-                    whileHover={{ x: 5 }}
-                    className="p-6 bg-card rounded-2xl border border-border/50 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
-                  >
-                    {/* Status Badge */}
-                    {edu.status === "current" && (
-                      <span className="inline-block px-3 py-1 text-xs font-medium bg-accent/10 text-accent rounded-full mb-4">
-                        Currently Pursuing
-                      </span>
-                    )}
+                <p className="text-sm text-muted-foreground mb-4">
+                  {edu.description}
+                </p>
 
-                    <h4 className="text-lg font-bold text-primary mb-1">
-                      {edu.degree}
-                    </h4>
-                    <p className="text-accent font-medium mb-2">{edu.institution}</p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {edu.period}
-                      </span>
-                      <span>{edu.location}</span>
-                    </div>
-
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {edu.description}
-                    </p>
-
-                    {/* Highlights */}
-                    <div className="flex flex-wrap gap-2">
-                      {edu.highlights.map((highlight) => (
-                        <span
-                          key={highlight}
-                          className="px-3 py-1 text-xs bg-muted/50 text-muted-foreground rounded-full"
-                        >
-                          {highlight}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              ))}
+                {/* Highlights */}
+                <div
+                  className={`flex flex-wrap gap-2 ${
+                    isLeft ? "lg:justify-end" : ""
+                  }`}
+                >
+                  {edu.highlights.map((highlight) => (
+                    <span
+                      key={highlight}
+                      className="px-3 py-1 text-xs bg-muted/50 text-muted-foreground rounded-full"
+                    >
+                      {highlight}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  </div>
+
+
 
           {/* Certifications */}
-          <div className="lg:col-span-2">
-            <motion.h3
+          {/* <div className="lg:col-span-2"> */}
+            {/* <motion.h3
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : {}}
               transition={{ delay: 0.2 }}
@@ -185,10 +214,10 @@ const EducationSection = () => {
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </div> */}
 
             {/* Quick Stats */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.8 }}
@@ -204,8 +233,8 @@ const EducationSection = () => {
                   <p className="text-xs text-muted-foreground">Master's Grad</p>
                 </div>
               </div>
-            </motion.div>
-          </div>
+            </motion.div> */}
+          {/* </div> */}
         </div>
       </div>
     </section>

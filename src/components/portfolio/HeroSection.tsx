@@ -1,15 +1,61 @@
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { Suspense, lazy, useEffect, useState } from "react";
+import {
+  Database,
+  Brain,
+  TrendingUp,
+  ChevronDown,
+  ArrowRight,
+} from "lucide-react";
 import profilePhoto from "@/assets/profile-photo.jpeg";
 
+const DataSphere = lazy(() => import("./DataSphere"));
+
 const HeroSection = () => {
+  const headlineWords = [
+    "Transforming",
+    "Business",
+    "Data",
+    "into",
+    "Actionable",
+    "Insights",
+  ];
+
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section id="home" className="min-h-screen flex items-center bg-background pt-20">
-      <div className="section-container">
+    <section
+      id="home"
+      className="min-h-screen flex items-center bg-background pt-20 flex flex-col justify-center relative overflow-hidden"
+    >
+      {/* Background motion shapes */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          className="absolute -inset-4 bg-gradient-to-br from-accent/20 via-secondary/10 to-transparent rounded-3xl blur-2xl"
+          animate={{ opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 6, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute -top-3 -right-3 w-6 h-6 bg-accent rounded-full shadow-lg"
+          animate={{ y: [-5, 5, -5] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute -bottom-2 -left-2 w-4 h-4 bg-secondary rounded-full shadow-md"
+          animate={{ y: [5, -5, 5] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+        />
+      </div>
+
+      {/* 3D Data Sphere */}
+      <Suspense fallback={null}>
+        <DataSphere />
+      </Suspense>
+
+      {/* Main content container */}
+      <div className="section-container relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Column - Text Content */}
           <motion.div
@@ -26,7 +72,9 @@ const HeroSection = () => {
               className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full mb-6"
             >
               <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-accent">Data Science & Machine Learning</span>
+              <span className="text-sm font-medium text-accent">
+                Data Science & Machine Learning
+              </span>
             </motion.div>
 
             {/* Headline */}
@@ -47,8 +95,9 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
             >
-              Data Science student specializing in machine learning and business analytics. 
-              I turn complex datasets into strategic decisions that drive growth and innovation.
+              Data Science student specializing in machine learning and business
+              analytics. I turn complex datasets into strategic decisions that
+              drive growth and innovation.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -88,9 +137,9 @@ const HeroSection = () => {
                 animate={{ opacity: [0.5, 0.8, 0.5] }}
                 transition={{ duration: 4, repeat: Infinity }}
               />
-              
+
               {/* Photo container */}
-              <div className="relative w-60 h-68 md:w-68 md:h-84 lg:w-96 lg:h-[28rem] rounded-2xl overflow-hidden shadow-elevated border border-border/50">
+              <div className="relative w-72 h-80 md:w-80 md:h-96 lg:w-96 lg:h-[28rem] rounded-2xl overflow-hidden shadow-elevated border border-border/50">
                 <img
                   src={profilePhoto}
                   alt="Ahsan Jahangir - Data Science Professional"
@@ -114,23 +163,24 @@ const HeroSection = () => {
             </div>
           </motion.div>
         </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2"
-        >
-          <span className="text-xs text-muted-foreground tracking-wider uppercase">Scroll to explore</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <ChevronDown className="w-5 h-5 text-accent" />
-          </motion.div>
-        </motion.div>
       </div>
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className=" bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2"
+      >
+        <span className="text-xs text-muted-foreground tracking-wider uppercase">
+          Scroll to explore
+        </span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <ChevronDown className="w-5 h-5 text-accent" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };

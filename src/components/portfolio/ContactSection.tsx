@@ -30,20 +30,20 @@ const ContactSection = () => {
     {
       icon: Mail,
       label: "Email",
-      value: "ahsan.jahangir@email.com",
-      href: "mailto:ahsan.jahangir@email.com",
+      value: "ahsanjahangir.eu@gmail.com  ",
+      href: "mailto:ahsanjahangir.eu@gmail.com",
     },
     {
       icon: Phone,
       label: "Phone",
-      value: "+39 XXX XXX XXXX",
-      href: "tel:+39XXXXXXXXXX",
+      value: "(+39) 329 004 7650",
+      href: "tel:+393290047650",
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
-      value: "linkedin.com/in/ahsanjahangir",
-      href: "https://linkedin.com/in/ahsanjahangir",
+      value: "linkedin.com/in/ahsan-jahangir-",
+      href: "https://www.linkedin.com/in/ahsan-jahangir-/",
     },
   ];
 

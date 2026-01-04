@@ -1,11 +1,27 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, ArrowUp } from "lucide-react";
 
 const Footer = () => {
+  const [showButton, setShowButton] = useState(false);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Listen to scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
     <footer className="py-12 border-t border-border/50">
       <div className="section-container">
@@ -21,9 +37,9 @@ const Footer = () => {
           {/* Social Links */}
           <div className="flex items-center gap-4">
             {[
-              { icon: Github, href: "https://github.com", label: "GitHub" },
-              { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-              { icon: Mail, href: "mailto:ahsan@example.com", label: "Email" },
+              { icon: Github, href: "https://github.com/Ahsan-Jahanagir", label: "GitHub" },
+              { icon: Linkedin, href: "https://www.linkedin.com/in/ahsan-jahangir-", label: "LinkedIn" },
+              { icon: Mail, href: "mailto:ahsanjahangir.eu@gmail.com", label: "Email" },
             ].map((social) => (
               <motion.a
                 key={social.label}
@@ -45,7 +61,7 @@ const Footer = () => {
             onClick={scrollToTop}
             whileHover={{ y: -3 }}
             whileTap={{ scale: 0.9 }}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+  className="fixed bottom-6 right-6 flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-colors z-50"
           >
             Back to Top
             <ArrowUp className="w-4 h-4" />

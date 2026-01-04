@@ -24,18 +24,19 @@ const Navigation = () => {
   }, []);
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-soft"
-          : "bg-transparent"
-      }`}
-    >
+<motion.nav
+  initial={{ y: -100 }}
+  animate={{ y: 0 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    isScrolled
+      ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-soft"
+      : "bg-transparent"
+  }`}
+>
+
       <div className="section-container">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 ">
           {/* Logo */}
           <motion.a
             href="#"
@@ -43,10 +44,10 @@ const Navigation = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="text-gradient">AJ</span>
-            <span className="text-muted-foreground font-normal ml-2 text-sm hidden sm:inline">
-              Data Science
-            </span>
+            <span className="text-gradient text-4xl">AJ</span>
+            {/* <span className="text-muted-foreground font-normal ml-2 text-sm hidden sm:inline">
+              Data Scientist
+            </span> */}
           </motion.a>
 
           {/* Desktop Navigation */}
