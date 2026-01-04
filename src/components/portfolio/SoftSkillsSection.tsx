@@ -21,7 +21,7 @@ const softSkills = [
 const languages = [
   { name: "English", level: "Professional", flag: "🇬🇧" },
   { name: "Urdu", level: "Native", flag: "🇵🇰" },
-  { name: "Italian", level: "Intermediate", flag: "🇮🇹" },
+  // { name: "Italian", level: "Intermediate", flag: "🇮🇹" },
   { name: "Hindi", level: "Conversational", flag: "🇮🇳" },
 ];
 

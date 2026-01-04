@@ -87,7 +87,7 @@ const EducationSection = () => {
     </motion.h3>
 
     {/* Center Timeline Line */}
-    <div className="absolute left-1/2 top-16 h-full w-[2px] bg-accent/30 -translate-x-1/2" />
+    <div className="absolute left-1/2 top-10 h-[90%] w-[2px] bg-accent/30 -translate-x-1/2" />
 
     <div className="space-y-16">
       {education.map((edu, index) => {
@@ -103,7 +103,7 @@ const EducationSection = () => {
           >
             {/* Timeline Dot */}
             <div
-              className={`absolute left-1/2 top-6 w-4 h-4 rounded-full border-4 border-background -translate-x-1/2 ${
+              className={`absolute left-1/2 top-2 w-4 h-4 rounded-full border-4 border-background -translate-x-1/2 ${
                 edu.status === "current"
                   ? "bg-accent animate-pulse"
                   : "bg-secondary"

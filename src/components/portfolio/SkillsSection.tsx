@@ -70,10 +70,10 @@ const skillCategories = [
 ];
 
 // Fixed heights for the card interior - card height stays constant
-const CARD_HEIGHT = 340; // Fixed card height in pixels
+const CARD_HEIGHT = 350; // Fixed card height in pixels
 const HEADER_HEIGHT = 72; // Icon + title section
 const SKILL_COLLAPSED_HEIGHT = 44; // Each skill when collapsed
-const SKILL_EXPANDED_HEIGHT = 76; // Each skill when expanded (with usage text)
+const SKILL_EXPANDED_HEIGHT = 50; // Each skill when expanded (with usage text)
 
 interface SkillItemProps {
   skill: { name: string; usage: string };
@@ -99,7 +99,7 @@ const SkillItem = ({ skill, isExpanded, onHoverStart, onHoverEnd }: SkillItemPro
       className="overflow-hidden cursor-pointer"
     >
       <div
-        className={`h-full px-4 py-3 rounded-xl border transition-colors duration-200 ${
+        className={`h-full px-3 py-2 rounded-xl border transition-colors duration-200 ${
           isExpanded
             ? "border-primary/40 bg-primary/10"
             : "border-transparent bg-secondary/50 hover:bg-secondary/80"
@@ -126,7 +126,7 @@ const SkillItem = ({ skill, isExpanded, onHoverStart, onHoverEnd }: SkillItemPro
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="text-xs text-muted-foreground mt-2 leading-relaxed"
+              className="text-xs text-muted-foreground mt-0 mb-0 leading-relaxed"
             >
               {skill.usage}
             </motion.p>
@@ -157,8 +157,8 @@ const SkillCard = ({ category, index, isInView }: SkillCardProps) => {
     >
       {/* Category Header */}
       <div className="flex items-center gap-4 mb-5" style={{ height: HEADER_HEIGHT }}>
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-          <Icon className="w-6 h-6 text-primary-foreground" />
+        <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-6 h-6 text-primary-foreground bg-primary" />
         </div>
         <h3 className="text-lg font-semibold text-foreground">
           {category.title}
@@ -168,7 +168,7 @@ const SkillCard = ({ category, index, isInView }: SkillCardProps) => {
       {/* Skills List - Using flex with fixed container */}
       <motion.div 
         layout
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-3"
         style={{ height: CARD_HEIGHT - HEADER_HEIGHT - 48 }} // 48px for padding
       >
         {category.skills.map((skill) => (
@@ -184,7 +184,7 @@ const SkillCard = ({ category, index, isInView }: SkillCardProps) => {
       </motion.div>
 
       {/* Decorative glow */}
-      <div className="absolute -z-10 top-0 right-0 w-32 h-32 rounded-full bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute -z-10 top-0 right-0 w-32 h-32 rounded-full bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     </motion.div>
   );
 };
