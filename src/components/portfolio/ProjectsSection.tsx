@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { ExternalLink, Github, Database, BarChart3, Globe, TrendingDown, ChevronRight, X, CheckCircle2, Lightbulb, Target } from "lucide-react";
+import { useRef, useState, useCallback } from "react";
+import { ExternalLink, Github, Database, BarChart3, Globe, TrendingDown, ChevronRight, ChevronDown, ChevronUp, X, CheckCircle2, Lightbulb, Target } from "lucide-react";
 
 const projects = [
   {
@@ -100,6 +100,7 @@ const projects = [
     featured: false,
     size: "medium",
   },
+  
 ];
 
 interface Project {
@@ -339,10 +340,29 @@ const ProjectCard = ({ project, index, isInView, onSelect }: { project: Project;
   );
 };
 
+const INITIAL_VISIBLE = 3;
+const INCREMENT = 3;
+
 const ProjectsSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+
+  const totalProjects = projects.length;
+  const visibleProjects = projects.slice(0, visibleCount);
+  const hasMoreProjects = visibleCount < totalProjects;
+  const canShowLess = visibleCount > INITIAL_VISIBLE;
+
+  const handleShowMore = useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + INCREMENT, totalProjects));
+  }, [totalProjects]);
+
+  const handleShowLess = useCallback(() => {
+    setVisibleCount(INITIAL_VISIBLE);
+  }, []);
+
+  const remainingCount = totalProjects - visibleCount;
 
   return (
     <>
@@ -371,24 +391,81 @@ const ProjectsSection = () => {
           </motion.div>
 
           {/* Bento Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {projects.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={index}
-                isInView={isInView}
-                onSelect={() => setSelectedProject(project)}
-              />
-            ))}
-          </div>
+          <motion.div 
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          >
+            <AnimatePresence mode="popLayout">
+              {visibleProjects.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  layout
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ 
+                    duration: 0.4, 
+                    delay: index >= visibleCount - INCREMENT ? (index - (visibleCount - INCREMENT)) * 0.1 : 0,
+                    layout: { duration: 0.4 }
+                  }}
+                >
+                  <ProjectCard
+                    project={project}
+                    index={index}
+                    isInView={isInView}
+                    onSelect={() => setSelectedProject(project)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Show More / Show Less Buttons */}
+          {(hasMoreProjects || canShowLess) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center justify-center gap-6 mt-8 sm:mt-12"
+            >
+              {canShowLess && (
+                <button
+                  onClick={handleShowLess}
+                  aria-label="Collapse to show only first 3 projects"
+                  className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                >
+                  <ChevronUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                  <span className="relative">
+                    Show Less
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+                  </span>
+                </button>
+              )}
+              
+              {hasMoreProjects && (
+                <button
+                  onClick={handleShowMore}
+                  aria-label={`Show ${Math.min(INCREMENT, remainingCount)} more project${remainingCount === 1 ? '' : 's'}`}
+                  className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                >
+                  <span className="relative">
+                    Show More
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+                  </span>
+                  <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
+                </button>
+              )}
+            </motion.div>
+          )}
         </div>
       </section>
 
       {/* Modal */}
-      {selectedProject && (
-        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
-      )}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+      </AnimatePresence>
     </>
   );
 };
